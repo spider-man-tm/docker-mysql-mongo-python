@@ -1,0 +1,45 @@
+version: "3"
+services:
+
+  mongo:
+    container_name: "mongo_db"       # コンテナネーム
+    image: mongo:4.1.13              # 元となるmongoDBのイメージ
+    volumes:
+      - ./mongo:/data/db             # ホスト:コンテナ でマウント
+    ports:
+      - "27017:27017"                # ホスト:コンテナ でport指定
+    networks:
+      - app-tier                     # コンテナ間のネットワークを定義
+
+  mysql:
+    container_name: "mysql_db"
+    platform: linux/x86_64           # M1 Mac のみ
+    image: mysql:5.7
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    volumes:
+      - ./mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password  # root user のパスワード
+    networks:
+      - app-tier
+
+  app:
+    container_name: "python"
+    build:
+      context: .                     # buildsする際のカレントディレクトリ
+      dockerfile: ./Dockerfile       # Dockerfileのパス
+    image: python
+    volumes:
+      - $PWD:/home/python
+    tty: true
+    depends_on:                      # 依存関係
+      - mongo
+      - mysql
+    networks:
+      - app-tier
+
+networks:
+  app-tier:
+    driver: bridge
