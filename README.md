@@ -84,3 +84,5 @@ $ python src/mongo.py
 
 # 補足
 ホストのディレクトがマウントされているので、例えば下記のようにdockerコンテナ内に入ってコードを編集したり、DBを書き換えたりした場合、ホスト内のファイルも同様に変更される。
+
+![fig](https://github.com/spider-man-tm/readme_figure/blob/master/docker-mysql-mongo-python/image.png)
